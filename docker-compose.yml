@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    env_file:
+      - MyResume/MyResume/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+    command: postgres -c fsync=off -p 5432
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app_service
+    depends_on:
+      - postgres
+    env_file:
+      - MyResume/MyResume/.env
+    volumes:
+      - .:/srv/app
+    ports:
+      - "8000:8000"
+    command: bash -c "cd /srv/app/MyResume && gunicorn MyResume.wsgi:application --bind 0.0.0.0:8000"
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgresql-data:
+  static-data:
