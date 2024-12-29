@@ -46,4 +46,3 @@ first_up:
 	make up
 	make migrate
 	make restore
-	make collectstatic
